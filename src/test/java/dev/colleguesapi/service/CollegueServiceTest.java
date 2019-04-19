@@ -3,9 +3,7 @@ package dev.colleguesapi.service;
 import java.time.LocalDate;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import dev.colleguesapi.Collegue;
 import dev.colleguesapi.exceptions.CollegueInvalideException;
