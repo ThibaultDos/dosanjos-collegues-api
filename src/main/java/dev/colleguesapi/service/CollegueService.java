@@ -111,8 +111,12 @@ public class CollegueService {
 		if (StringUtils.isEmpty(collegueAAjouter.getEmail())) {
 			throw new CollegueInvalideException("I AM ERROR.\nAucun e-mail enregistré");
 		}
+		// génère une adresse mail à partir des infos du collègue :
+		// prenom.nom@societe.com
+		collegueAAjouter.setEmail(generateEmail(collegueAAjouter));
 		boolean emailValide = collegueAAjouter.getEmail().length() >= 3
-				//&& EmailValidator.getInstance().isValid(collegueAAjouter.getEmail());
+				// &&
+				// EmailValidator.getInstance().isValid(collegueAAjouter.getEmail());
 				&& StringUtils.contains(collegueAAjouter.getEmail(), "@");
 
 		if (StringUtils.isEmpty(collegueAAjouter.getPhotoUrl())) {

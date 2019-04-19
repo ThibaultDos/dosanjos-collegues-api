@@ -16,16 +16,6 @@ public class CollegueServiceTest {
 	private String emailTest = null;
 	private Collegue collegueTest;
 	private CollegueService collegueService = new CollegueService();
-	@Rule /*
-			 * définit une régle par défaut qui sera appliquée à tous les tests
-			 * type d'exception attendu
-			 */
-	public ExpectedException rutoException = ExpectedException.none();
-	/*
-	 * type de message attendu : peut être passé en paramètre de la méthode
-	 * expectmessage()
-	 */
-	private String rutoMessage = "I AM ERROR.";
 
 	@Before
 	public void setUp() {
@@ -33,22 +23,20 @@ public class CollegueServiceTest {
 		 * Instancie un nouveau collègue et un nouveau service indépendamment de
 		 * chaque test
 		 */
-		this.collegueTest = new Collegue(null, "NomValide", "Prénom1, Prénom2", emailTest, LocalDate.of(1993, 3, 20),
+		this.collegueTest = new Collegue(null, "NomValide", "PrénomValide, DeuxièmePrénomValide", emailTest, LocalDate.of(1993, 3, 20),
 				photoUrlTest);
-		collegueTest.setEmail(collegueTest.getPrenoms() + "." + collegueTest.getNom() + "@societe.com");
+		collegueTest.setEmail(collegueService.generateEmail(collegueTest));
 	}
 
-	@Test
+	@Test(expected = CollegueInvalideException.class)
 	// Rend le test passant
 	public void testAjouterUnCollegueOK_NomInvalide() throws CollegueInvalideException {
-		rutoException.expect(CollegueInvalideException.class);
-		rutoException.expectMessage(rutoMessage);
 		String nom = null;
 		collegueTest.setNom(nom);
 		collegueService.ajouterUnCollegue(collegueTest);
 	}
 
-	@Test
+	@Test(expected = CollegueInvalideException.class)
 	// Rend le test passant
 	public void testAjouterUnCollegueOK_NomInvalide2() throws CollegueInvalideException {
 		String nom = "";
@@ -56,7 +44,7 @@ public class CollegueServiceTest {
 		collegueService.ajouterUnCollegue(collegueTest);
 	}
 
-	@Test
+	@Test(expected = CollegueInvalideException.class)
 	// Rend le test passant
 	public void testAjouterUnCollegueOK_NomInvalide3() throws CollegueInvalideException {
 		String nom = "X";
@@ -73,17 +61,15 @@ public class CollegueServiceTest {
 		collegueService.ajouterUnCollegue(collegueTest);
 	}
 
-	@Test
+	@Test(expected = CollegueInvalideException.class)
 	// Rend le test passant
 	public void testAjouterUnCollegueOK_PrenomsInvalide() throws CollegueInvalideException {
-		rutoException.expect(CollegueInvalideException.class);
-		rutoException.expectMessage(rutoMessage);
 		String prenoms = null;
 		collegueTest.setPrenoms(prenoms);
 		collegueService.ajouterUnCollegue(collegueTest);
 	}
 
-	@Test
+	@Test(expected = CollegueInvalideException.class)
 	// Rend le test passant
 	public void testAjouterUnCollegueOK_PrenomsInvalide2() throws CollegueInvalideException {
 		String prenoms = "";
@@ -91,7 +77,7 @@ public class CollegueServiceTest {
 		collegueService.ajouterUnCollegue(collegueTest);
 	}
 
-	@Test
+	@Test(expected = CollegueInvalideException.class)
 	// Rend le test passant
 	public void testAjouterUnCollegueOK_PrenomsInvalide3() throws CollegueInvalideException {
 		String prenoms = "X";
@@ -99,7 +85,7 @@ public class CollegueServiceTest {
 		collegueService.ajouterUnCollegue(collegueTest);
 	}
 
-	@Test
+	@Test(expected = CollegueInvalideException.class)
 	// Rend le test passant
 	public void testAjouterUnCollegueOK_PrenomsInvalide4() throws CollegueInvalideException {
 		String prenoms = "X, Pierre";
@@ -115,7 +101,7 @@ public class CollegueServiceTest {
 		collegueService.ajouterUnCollegue(collegueTest);
 	}
 	
-	@Test
+	@Test(expected = CollegueInvalideException.class)
 	// Rend le test non-passant
 	public void testAjouterUnCollegueNOK_PrenomsValide() throws CollegueInvalideException {
 		String prenoms = "Jean-Pierre";
@@ -123,7 +109,7 @@ public class CollegueServiceTest {
 		collegueService.ajouterUnCollegue(collegueTest);
 	}
 
-	@Test
+	@Test(expected = CollegueInvalideException.class)
 	// Rend le test non-passant
 	public void testAjouterUnCollegueNOK_PrenomsValide2() throws CollegueInvalideException {
 		String prenoms = "Jean, Pierre";
