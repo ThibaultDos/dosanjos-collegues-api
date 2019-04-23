@@ -41,7 +41,6 @@ public class CollegueService {
 		return this.collegueRepo.findByNom(nomRecherche);
 	}
 
-//	utiliser le findbyID
 	public Collegue rechercherParMatricule(String matricule) throws CollegueNonTrouveException {	
 		if (this.collegueRepo.findByMatricule(matricule) == null) {
 			throw new CollegueNonTrouveException();
