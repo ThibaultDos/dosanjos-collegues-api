@@ -7,6 +7,8 @@ import org.junit.Test;
 
 import dev.colleguesapi.Collegue;
 import dev.colleguesapi.exceptions.CollegueInvalideException;
+import dev.colleguesapi.exceptions.CollegueNonTrouveException;
+import dev.colleguesapi.exceptions.CollegueServiceException;
 
 public class CollegueServiceTest {
 
@@ -115,4 +117,20 @@ public class CollegueServiceTest {
 		collegueService.ajouterUnCollegue(collegueTest);
 	}
 
+	@Test(expected = CollegueNonTrouveException.class)
+	// Rend le test passant
+	public void testModifierEmailOK_MatriculeInvalide() throws CollegueServiceException {
+		String matricule = "matriculeInvalide";
+		String mail = "mail@valide";
+		collegueService.modifierEmail(matricule, mail);
+	}
+	
+	@Test(expected = CollegueInvalideException.class)
+	// Rend le test passant
+	public void testModifierEmailOK_EmailInvalide() throws CollegueServiceException {
+		String matricule = "matricule valide";
+		String mail = "mail";
+		collegueService.modifierEmail(matricule, mail);
+	}
+	
 }

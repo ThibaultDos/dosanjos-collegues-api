@@ -2,14 +2,32 @@ package dev.colleguesapi;
 
 import java.time.LocalDate;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.springframework.stereotype.Controller;
+
+@Controller
+@Entity
+@Table(name="COLLEGUE")
 public class Collegue {	
 
-	String matricule ;
-	String nom ;
-	String prenoms ;
-	String email ;
-	LocalDate dateDeNaissance ;
-	String photoUrl ;
+	@Id
+	@Column(name="MATRICULE")
+	private String matricule ;
+	
+	@Column(name="NOM", nullable=false, unique=false)
+	private String nom ;
+	@Column(name="PRENOMS", nullable=false, unique=false)
+	private String prenoms ;
+	@Column(name="EMAIL", unique=true)
+	private String email ;
+	@Column(name="DATE_NAISSANCE", nullable=false, unique=false)
+	private LocalDate dateDeNaissance ;
+	@Column(name="PHOTO_URL")
+	private String photoUrl ;
 	
 	/**
 	 * Empty default constructor
