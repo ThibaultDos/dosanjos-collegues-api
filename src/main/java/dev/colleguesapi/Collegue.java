@@ -9,7 +9,6 @@ import javax.persistence.Table;
 
 import org.springframework.stereotype.Controller;
 
-@Controller
 @Entity
 @Table(name="COLLEGUE")
 public class Collegue {	

@@ -1,6 +1,7 @@
 package dev.colleguesapi;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -19,9 +20,6 @@ public class StartupDataInit {
 	
 	@Autowired
     private CollegueRepository collegueRepo;
-	@Autowired
-	
-	public Map<String, Collegue> data = new HashMap<>();
 
     // La méthode init va être invoquée au démarrage de l'application.
     @EventListener(ContextRefreshedEvent.class)
@@ -53,13 +51,11 @@ public class StartupDataInit {
 				photoUrl);
 		c6.setEmail(generateEmail(c6));
 
-		data.put(c1.getMatricule(), c1);
-		data.put(c2.getMatricule(), c2);
-		data.put(c3.getMatricule(), c3);
-		data.put(c4.getMatricule(), c4);
-		data.put(c5.getMatricule(), c5);
-		data.put(c6.getMatricule(), c6);
-		collegueRepo.saveAll(data.values());
+		Collegue c7 = new Collegue(UUID.randomUUID().toString(), "Fonfec", "Sophie", email, LocalDate.of(1993, 03, 20),
+				"https://proxy.duckduckgo.com/iu/?u=http%3A%2F%2Fdhs.gov%2Fsites%2Fdefault%2Ffiles%2Fimages%2FREAL-ID_icon_public.png&f=1");
+		c7.setEmail(generateEmail(c7));
+	
+		collegueRepo.saveAll(Arrays.asList(c1, c2, c3, c4, c5, c6, c7));
 
     }
     

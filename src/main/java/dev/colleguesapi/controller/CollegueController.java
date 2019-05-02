@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,12 +23,20 @@ import dev.colleguesapi.service.CollegueService;
 
 @RestController // Ici cette classe va répondre aux requêtes "/collegues"
 @RequestMapping("/collegues")
+@CrossOrigin
 public class CollegueController {
 
 	@Autowired
 	private CollegueService collegueService;
-	@Autowired
-	private Collegue infosCollegue;
+	
+	
+	@GetMapping
+	@RequestMapping("/matricules")
+	public List<String> listerTousLesMatricules(){
+		
+		List<String> listeDeTousLesMatricules = collegueService.afficherTousLesMatricules();
+		return listeDeTousLesMatricules;
+	}
 
 	@GetMapping
 	public List<String> listerCollegues(@RequestParam("nom") String nomSaisiDansLaRequete) {
@@ -46,7 +55,7 @@ public class CollegueController {
 	@RequestMapping("/{matricule}")
 	public ResponseEntity<Collegue> infosCollegue(@PathVariable String matricule) throws CollegueNonTrouveException {
 
-		infosCollegue = collegueService.rechercherParMatricule(matricule);
+		Collegue infosCollegue = collegueService.rechercherParMatricule(matricule);
 		return ResponseEntity.status(HttpStatus.OK).body(infosCollegue);
 	}
 
@@ -56,6 +65,7 @@ public class CollegueController {
 	}
 
 	@PostMapping
+	@RequestMapping("/nouveau")
 	public Collegue ajouterUnCollegue(@RequestBody Collegue nouveauCollegue) throws CollegueInvalideException {
 		nouveauCollegue = collegueService.ajouterUnCollegue(nouveauCollegue);
 		return nouveauCollegue;

@@ -3,6 +3,7 @@ package dev.colleguesapi.service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,10 @@ public class CollegueService {
 		c.setEmail(prenom1 + "." + c.getNom() + "@societe.com");
 		String email = c.getEmail();
 		return email;
+	}
+	
+	public List<String> afficherTousLesMatricules(){
+		return this.collegueRepo.findAll().stream().map(Collegue::getMatricule/* collegue -> collegue.getMatricule ()*/).collect(Collectors.toList());
 	}
 
 	public List<Collegue> rechercherParNom(String nomRecherche) {		
@@ -74,7 +79,7 @@ public class CollegueService {
 		// prenom.nom@societe.com
 		collegueAAjouter.setEmail(generateEmail(collegueAAjouter));
 		boolean emailValide = collegueAAjouter.getEmail().length() >= 3
-				/*
+				/* Tout doux :
 				 * Utiliser EmailValidator après formattage du prénom sans
 				 * accent ou caractère spécial importer le package import
 				 * org.apache.commons.validator.routines.EmailValidator; &&
