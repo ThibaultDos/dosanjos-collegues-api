@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
+
 
 import dev.colleguesapi.Collegue;
 import dev.colleguesapi.exceptions.CollegueInvalideException;
@@ -110,10 +113,17 @@ public class CollegueService {
 		}
 	}
 
+	@Transactional
 	public Collegue modifierEmail(String matricule, String email) throws CollegueServiceException {
-		
-		Collegue updateCollegue = rechercherParMatricule(matricule);		
+		Collegue updateCollegue = rechercherParMatricule(matricule);
 		updateCollegue.setEmail(email);
-		return this.collegueRepo.save(updateCollegue);
+		return updateCollegue;
+	}
+	
+	@Transactional
+	public Collegue modifierPhotoUrl(String matricule, String PhotoUrl) throws CollegueServiceException {
+		Collegue updateCollegue = rechercherParMatricule(matricule);
+		updateCollegue.setPhotoUrl(PhotoUrl);
+		return updateCollegue;
 	}
 }
