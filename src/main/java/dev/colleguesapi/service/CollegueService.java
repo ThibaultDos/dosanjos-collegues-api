@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
-
 import dev.colleguesapi.Collegue;
+import dev.colleguesapi.PhotoCollegue;
 import dev.colleguesapi.exceptions.CollegueInvalideException;
 import dev.colleguesapi.exceptions.CollegueNonTrouveException;
 import dev.colleguesapi.exceptions.CollegueServiceException;
@@ -24,8 +24,9 @@ import dev.colleguesapi.repos.CollegueRepository;
 @EnableJpaRepositories("dev.colleguesapi.repos")
 @Service
 public class CollegueService {
-	
-	@Autowired CollegueRepository collegueRepo;
+
+	@Autowired
+	CollegueRepository collegueRepo;
 
 	public String generateEmail(Collegue c) {
 		String prenoms = c.getPrenoms();
@@ -40,20 +41,28 @@ public class CollegueService {
 		String email = c.getEmail();
 		return email;
 	}
-	
-	public List<String> afficherTousLesMatricules(){
-		return this.collegueRepo.findAll().stream().map(Collegue::getMatricule/* collegue -> collegue.getMatricule ()*/).collect(Collectors.toList());
+
+	public List<String> afficherTousLesMatricules() {
+		return this.collegueRepo.findAll().stream().map(Collegue::getMatricule).collect(Collectors.toList());
+		// la méthode map appelle la méthode référence de la classe Collegue <=>
+		// Collegue -> collegue.getMatricule ()
 	}
 
-	public List<Collegue> rechercherParNom(String nomRecherche) {		
+	public List<PhotoCollegue> afficherToutesLesPhotos() {
+		return this.collegueRepo.findAll().stream().map(
+				collegue -> new PhotoCollegue(collegue.getMatricule(), collegue.getPhotoUrl())
+				).collect(Collectors.toList());
+	}
+
+	public List<Collegue> rechercherParNom(String nomRecherche) {
 		return this.collegueRepo.findByNom(nomRecherche);
 	}
 
-	public Collegue rechercherParMatricule(String matricule) throws CollegueNonTrouveException {	
+	public Collegue rechercherParMatricule(String matricule) throws CollegueNonTrouveException {
 		if (this.collegueRepo.findByMatricule(matricule) == null) {
 			throw new CollegueNonTrouveException();
 		}
-		return this.collegueRepo.findById(matricule).orElseThrow( () -> new CollegueNonTrouveException() );
+		return this.collegueRepo.findById(matricule).orElseThrow(() -> new CollegueNonTrouveException());
 	}
 
 	public Collegue ajouterUnCollegue(Collegue collegueAAjouter) throws CollegueInvalideException {
@@ -61,7 +70,7 @@ public class CollegueService {
 		if (StringUtils.isEmpty(collegueAAjouter.getNom())) {
 			throw new CollegueInvalideException("I AM ERROR.\nAucun nom enregistré");
 		}
-				
+
 		boolean nomValide = collegueAAjouter.getNom().length() >= 2;
 
 		if (StringUtils.isEmpty(collegueAAjouter.getPrenoms())) {
@@ -82,11 +91,11 @@ public class CollegueService {
 		// prenom.nom@societe.com
 		collegueAAjouter.setEmail(generateEmail(collegueAAjouter));
 		boolean emailValide = collegueAAjouter.getEmail().length() >= 3
-				/* Tout doux :
-				 * Utiliser EmailValidator après formattage du prénom sans
-				 * accent ou caractère spécial importer le package import
-				 * org.apache.commons.validator.routines.EmailValidator; &&
-				 * EmailValidator.getInstance().isValid(collegueAAjouter.
+				/*
+				 * Tout doux : Utiliser EmailValidator après formattage du
+				 * prénom sans accent ou caractère spécial importer le package
+				 * import org.apache.commons.validator.routines.EmailValidator;
+				 * && EmailValidator.getInstance().isValid(collegueAAjouter.
 				 * getEmail());
 				 */
 				&& StringUtils.contains(collegueAAjouter.getEmail(), "@");
@@ -105,7 +114,7 @@ public class CollegueService {
 		if (nomValide && prenomsValide && emailValide && dateDeNaissanceValide && photoUrlValide) {
 			collegueAAjouter.setMatricule(UUID.randomUUID().toString());
 			collegueAAjouter.setEmail(generateEmail(collegueAAjouter));
-			
+
 			collegueRepo.save(collegueAAjouter);
 			return collegueAAjouter;
 		} else {
@@ -119,7 +128,7 @@ public class CollegueService {
 		updateCollegue.setEmail(email);
 		return updateCollegue;
 	}
-	
+
 	@Transactional
 	public Collegue modifierPhotoUrl(String matricule, String PhotoUrl) throws CollegueServiceException {
 		Collegue updateCollegue = rechercherParMatricule(matricule);

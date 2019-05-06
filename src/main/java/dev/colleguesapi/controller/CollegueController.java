@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.colleguesapi.Collegue;
+import dev.colleguesapi.PhotoCollegue;
 import dev.colleguesapi.exceptions.CollegueInvalideException;
 import dev.colleguesapi.exceptions.CollegueNonTrouveException;
 import dev.colleguesapi.exceptions.CollegueServiceException;
@@ -31,19 +32,21 @@ public class CollegueController {
 	@Autowired
 	private CollegueService collegueService;
 
-	@GetMapping
-	@RequestMapping("/matricules")
+	@GetMapping("/matricules")
 	public List<String> listerTousLesMatricules() {
-
 		List<String> listeDeTousLesMatricules = collegueService.afficherTousLesMatricules();
 		return listeDeTousLesMatricules;
 	}
-
+	
+	@GetMapping("/photos")
+	public List<PhotoCollegue> listerToutesLesPhotos() {
+		List<PhotoCollegue> listeDeToutesLesPhotos = collegueService.afficherToutesLesPhotos();
+		return listeDeToutesLesPhotos;
+	}
+	
 	@GetMapping
 	public List<String> listerCollegues(@RequestParam("nom") String nomSaisiDansLaRequete) {
-
 		List<Collegue> listeColleguesTrouves = collegueService.rechercherParNom(nomSaisiDansLaRequete);
-
 		List<String> listeMatricules = new ArrayList<>();
 		for (Collegue c : listeColleguesTrouves) {
 			listeMatricules.add(c.getMatricule());

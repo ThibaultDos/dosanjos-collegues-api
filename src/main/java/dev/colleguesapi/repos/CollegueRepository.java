@@ -9,6 +9,5 @@ import dev.colleguesapi.Collegue;
 public interface CollegueRepository extends JpaRepository<Collegue, String>{
 	
 	List<Collegue> findByNom(String nom);
-	List<Collegue> findByMatricule(String matricule);		
-
+	List<Collegue> findByMatricule(String matricule);
 }
