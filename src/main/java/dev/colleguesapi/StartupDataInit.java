@@ -57,7 +57,7 @@ public class StartupDataInit {
 				"https://proxy.duckduckgo.com/iu/?u=http%3A%2F%2Fcigalemistralavande.c.i.pic.centerblog.net%2Fo7szr9qf.jpg&f=1");
 		c8.setEmail(generateEmail(c8));
 		
-		Collegue c9 = new Collegue(UUID.randomUUID().toString(), "J'ai su", "Jean, Luc, Mathieu, Marc", email, LocalDate.of(0001, 12, 24), photoUrl);
+		Collegue c9 = new Collegue(UUID.randomUUID().toString(), "J'ai su", "Jean, Luc, Mathieu, Marc", email, LocalDate.of(0001, 12, 24), "https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Fa%2Fad%2FAfterimage.svg%2F542px-Afterimage.svg.png&f=1");
 		c9.setEmail(generateEmail(c9));
 		
 		collegueRepo.saveAll(Arrays.asList(c1, c2, c3, c4, c5, c6, c7, c8, c9));
