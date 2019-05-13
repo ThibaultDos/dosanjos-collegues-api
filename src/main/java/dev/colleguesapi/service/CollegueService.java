@@ -8,9 +8,8 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
 import dev.colleguesapi.Collegue;
@@ -20,8 +19,7 @@ import dev.colleguesapi.exceptions.CollegueNonTrouveException;
 import dev.colleguesapi.exceptions.CollegueServiceException;
 import dev.colleguesapi.repos.CollegueRepository;
 
-@Configuration
-@EnableJpaRepositories("dev.colleguesapi.repos")
+
 @Service
 public class CollegueService {
 
@@ -29,6 +27,7 @@ public class CollegueService {
 	CollegueRepository collegueRepo;
 
 	public String generateEmail(Collegue c) {
+
 		String prenoms = c.getPrenoms();
 		String prenom1 = null;
 		if (StringUtils.contains(c.getPrenoms(), ", ")) {
@@ -38,31 +37,35 @@ public class CollegueService {
 			prenom1 = c.getPrenoms();
 		}
 		c.setEmail(prenom1 + "." + c.getNom() + "@societe.com");
-		String email = c.getEmail();
-		return email;
+		return c.getEmail();
 	}
 
 	public List<String> afficherTousLesMatricules() {
 		return this.collegueRepo.findAll().stream().map(Collegue::getMatricule).collect(Collectors.toList());
-		// la méthode map appelle la méthode référence de la classe Collegue <=>
-		// Collegue -> collegue.getMatricule ()
 	}
 
 	public List<PhotoCollegue> afficherToutesLesPhotos() {
-		return this.collegueRepo.findAll().stream().map(
-				collegue -> new PhotoCollegue(collegue.getMatricule(), collegue.getPhotoUrl())
-				).collect(Collectors.toList());
+		return this.collegueRepo.findAll().stream()
+				.map(collegue -> new PhotoCollegue(collegue.getMatricule(), collegue.getPhotoUrl()))
+				.collect(Collectors.toList());
 	}
 
 	public List<Collegue> rechercherParNom(String nomRecherche) {
 		return this.collegueRepo.findByNom(nomRecherche);
 	}
 
-	public Collegue rechercherParMatricule(String matricule) throws CollegueNonTrouveException {
-		if (this.collegueRepo.findByMatricule(matricule) == null) {
+	public Collegue rechercherParMatricule(String matriculeRecherche) throws CollegueNonTrouveException {
+		if (this.collegueRepo.findByMatricule(matriculeRecherche) == null) {
 			throw new CollegueNonTrouveException();
 		}
-		return this.collegueRepo.findById(matricule).orElseThrow(() -> new CollegueNonTrouveException());
+		return this.collegueRepo.findById(matriculeRecherche).orElseThrow(() -> new CollegueNonTrouveException());
+	}
+	
+	public Collegue rechercherParMail(String emailRecherche) throws CollegueNonTrouveException {
+		if (this.collegueRepo.findByEmail(emailRecherche) == null) {
+			throw new CollegueNonTrouveException();
+		}
+		return this.collegueRepo.findByEmail(emailRecherche).orElseThrow(() -> new CollegueNonTrouveException());
 	}
 
 	public Collegue ajouterUnCollegue(Collegue collegueAAjouter) throws CollegueInvalideException {
@@ -87,17 +90,8 @@ public class CollegueService {
 			}
 		}
 
-		// génère une adresse mail à partir des infos du collègue :
-		// prenom.nom@societe.com
 		collegueAAjouter.setEmail(generateEmail(collegueAAjouter));
 		boolean emailValide = collegueAAjouter.getEmail().length() >= 3
-				/*
-				 * Tout doux : Utiliser EmailValidator après formattage du
-				 * prénom sans accent ou caractère spécial importer le package
-				 * import org.apache.commons.validator.routines.EmailValidator;
-				 * && EmailValidator.getInstance().isValid(collegueAAjouter.
-				 * getEmail());
-				 */
 				&& StringUtils.contains(collegueAAjouter.getEmail(), "@");
 
 		if (StringUtils.isEmpty(collegueAAjouter.getPhotoUrl())) {

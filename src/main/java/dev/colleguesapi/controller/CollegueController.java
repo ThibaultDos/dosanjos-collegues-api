@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,16 +36,14 @@ public class CollegueController {
 
 	@GetMapping("/matricules")
 	public List<String> listerTousLesMatricules() {
-		List<String> listeDeTousLesMatricules = collegueService.afficherTousLesMatricules();
-		return listeDeTousLesMatricules;
+		return collegueService.afficherTousLesMatricules();
 	}
-	
+
 	@GetMapping("/photos")
 	public List<PhotoCollegue> listerToutesLesPhotos() {
-		List<PhotoCollegue> listeDeToutesLesPhotos = collegueService.afficherToutesLesPhotos();
-		return listeDeToutesLesPhotos;
+		return collegueService.afficherToutesLesPhotos();
 	}
-	
+
 	@GetMapping
 	public List<String> listerCollegues(@RequestParam("nom") String nomSaisiDansLaRequete) {
 		List<Collegue> listeColleguesTrouves = collegueService.rechercherParNom(nomSaisiDansLaRequete);
@@ -60,34 +60,44 @@ public class CollegueController {
 		return ResponseEntity.status(HttpStatus.OK).body(infosCollegue);
 	}
 
+	@Secured("ROLE_ADMIN")
 	@PostMapping
-	public ResponseEntity<Collegue> ajouterUnCollegue(@RequestBody Collegue nouveauCollegue) throws CollegueInvalideException {
+	public ResponseEntity<Collegue> ajouterUnCollegue(@RequestBody Collegue nouveauCollegue)
+			throws CollegueInvalideException {
 		nouveauCollegue = collegueService.ajouterUnCollegue(nouveauCollegue);
 		return ResponseEntity.status(HttpStatus.OK).body(nouveauCollegue);
 	}
 
+	@Secured("ROLE_COLLEGUE")
 	@PatchMapping("/{matricule}")
-	public ResponseEntity<Collegue> modifierUnCollegue(@RequestBody Collegue collegueUpdate, @PathVariable String matricule) throws CollegueServiceException {
+	public ResponseEntity<Collegue> modifierUnCollegue(@RequestBody Collegue collegueUpdate,
+			@PathVariable String matricule) throws CollegueServiceException {
 		Collegue collegueUpdated = collegueService.rechercherParMatricule(matricule);
-		
+
 		String newEmail = collegueUpdate.getEmail();
 		String newphotoUrl = collegueUpdate.getPhotoUrl();
-		
+
 		if (newEmail != null) {
 			collegueUpdated = collegueService.modifierEmail(matricule, newEmail);
 		}
-		
+
 		if (newphotoUrl != null) {
 			collegueUpdated = collegueService.modifierPhotoUrl(matricule, newphotoUrl);
 		}
-			
+
 		return ResponseEntity.status(HttpStatus.OK).body(collegueUpdated);
 	}
 
-	@ExceptionHandler(value = {CollegueNonTrouveException.class})
+	@ExceptionHandler(value = { CollegueNonTrouveException.class })
 	public ResponseEntity<String> reponseMatriculeException() {
 		return ResponseEntity.status(404).body("Collègue non trouvé.");
 	}
 
+	@GetMapping("/me")
+	public ResponseEntity<Collegue> logCollegue() throws CollegueNonTrouveException {
+		Collegue infosCollegue = collegueService
+				.rechercherParMail(SecurityContextHolder.getContext().getAuthentication().getName());
+		return ResponseEntity.status(HttpStatus.OK).body(infosCollegue);
+	}
 
 }

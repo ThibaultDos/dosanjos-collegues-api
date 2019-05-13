@@ -1,12 +1,13 @@
 package dev.colleguesapi;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 
 @Entity
 @Table(name="COLLEGUE")
@@ -15,6 +16,8 @@ public class Collegue {
 	@Id
 	@Column(name="MATRICULE")
 	private String matricule ;
+	@OneToMany(mappedBy="collegue")
+	private Set<Notes>note;
 	
 	@Column(name="NOM", nullable=false, unique=false)
 	private String nom ;
@@ -31,7 +34,6 @@ public class Collegue {
 	 * Empty default constructor
 	 */
 	public Collegue() {
-		super();
 	}
 	/**
 	 * @param matricule
@@ -122,5 +124,12 @@ public class Collegue {
 	 */
 	public void setPhotoUrl(String photoUrl) {
 		this.photoUrl = photoUrl;
+	}
+	public Set<Notes> getNote() {
+		return note;
+	}
+	public void setNote(Set<Notes> note) {
+		this.note = note;
 	}	
+	
 }
